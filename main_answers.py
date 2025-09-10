@@ -1,46 +1,37 @@
 from PIL import Image
 from PIL import ImageFilter
+#for bonus task
+from PIL import ImageEnhance
 
-class ImageEditor():
-    def __init__(self, filename):
-        self.filename = filename
-        self.original = None
-        self.changed = list()
+with Image.open('original.jpg') as pic_original:
+    print('Image is open\nSize:', pic_original.size)
+    print('Format:', pic_original.format)
+    print('Type:', pic_original.mode) #colored
+    pic_original.show()
 
-    def open(self):
-        try:
-            self.original = Image.open(self.filename)
-        except:
-            print('¡No se encuentra el archivo!')
-        self.original.show()
+    pic_gray = pic_original.convert('L')    
+    pic_gray.save('gray.jpg')
+    print('Image is created\nSize:', pic_gray.size)
+    print('Format:', pic_gray.format)
+    print('Type:', pic_gray.mode) #black and white
+    pic_gray.show()
 
-    def do_left(self):
-        rotated = self.original.transpose(Image.FLIP_LEFT_RIGHT)
-        self.changed.append(rotated)
+    pic_blured = pic_original.filter(ImageFilter.BLUR)
+    pic_blured.save('blured.jpg')
+    pic_blured.show()
 
-    #prima. Denominación automática para imágenes editadas
-        temp_filename = self.filename.split('.')
-        new_filename = temp_filename[0] + str(len(self.changed)) + '.jpg'
+    pic_up = pic_original.transpose(Image.ROTATE_180)
+    pic_up.save('up.jpg')
+    pic_up.show()
 
-        rotated.save(new_filename)
 
-#prima. recortó la imagen del bebé koala
-    def do_cropped(self):
-        box = (250, 100, 600, 400) #izquierda, arriba, derecha, abajo
-        cropped = self.original.crop(box)
-        self.changed.append(cropped)
+    #бонус 1. Mirror reflection
+    pic_mirrow = pic_original.transpose(Image.FLIP_LEFT_RIGHT)
+    pic_mirrow.save('mirrow.jpg')
+    pic_mirrow.show()
 
-#prima. Denominación automática para imágenes editadas
-        temp_filename = self.filename.split('.')
-        new_filename = temp_filename[0] + str(len(self.changed)) + '.jpg'
-
-        cropped.save(new_filename)
-
-MyImage = ImageEditor('original.jpg')
-MyImage.open()
-
-MyImage.do_left()
-MyImage.do_cropped()
-
-for im in MyImage.changed:
-    im.show()
+    #бонус 2. Increasing contrast 
+    pic_contrast = ImageEnhance.Contrast(pic_original)
+    pic_contrast = pic_contrast.enhance(1.5)
+    pic_contrast.save('contr.jpg')
+    pic_contrast.show()
